@@ -1,4 +1,4 @@
-def filter_by_state(list_dict: list[dict], state='EXECUTED') -> list[dict]:
+def filter_by_state(list_dict: list[dict], state: str = 'EXECUTED') -> list[dict]:
     """ Функция возвращает список словарей, у которых ключ state соответствует указанному значению."""
 
     new_list = []
@@ -10,7 +10,7 @@ def filter_by_state(list_dict: list[dict], state='EXECUTED') -> list[dict]:
     return new_list
 
 
-def sort_by_date(list_dict: list[dict], sort_by_decrease=True) -> list[dict]:
+def sort_by_date(list_dict: list[dict], sort_by_decrease: bool = True) -> list[dict]:
     """ Функция возвращает список, отсортированный по дате"""
 
     new_list = list_dict.copy()
