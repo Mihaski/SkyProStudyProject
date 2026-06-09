@@ -1,13 +1,16 @@
 import re
 
-from typing import Union
+from utils import has_non_digit_except_spaces
 
 
-def get_mask_card_number(card_number: Union[str, None] = None) -> str:
+def get_mask_card_number(card_number: str) -> str:
     """Hide card number"""
 
-    if card_number is None:
-        return "Ошибка: пустой ввод"
+    if has_non_digit_except_spaces(card_number):
+        return "Ошибка: присутсвуют буквы"
+
+    if card_number == "":
+        return "Ошибка: пустая ввод"
 
     prep_card_number = re.sub(r'\D', '', str(card_number))
 
@@ -19,6 +22,10 @@ def get_mask_card_number(card_number: Union[str, None] = None) -> str:
 
 def get_mask_account(account_number: str) -> str:
     """Hide account number"""
+
+    if has_non_digit_except_spaces(account_number):
+        return "Ошибка: присутсвуют буквы"
+
     prep_account_number = re.sub(r'\D', '', str(account_number))
 
     if len(prep_account_number) < 4:
