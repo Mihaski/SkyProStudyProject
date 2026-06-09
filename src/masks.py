@@ -7,7 +7,7 @@ def get_mask_card_number(card_number: str) -> str:
     """Hide card number"""
 
     if has_non_digit_except_spaces(card_number):
-        return "Ошибка: присутсвуют буквы"
+        return "Ошибка: присутствуют буквы"
 
     if card_number == "":
         return "Ошибка: пустая ввод"
@@ -24,7 +24,7 @@ def get_mask_account(account_number: str) -> str:
     """Hide account number"""
 
     if has_non_digit_except_spaces(account_number):
-        return "Ошибка: присутсвуют буквы"
+        return "Ошибка: присутствуют буквы"
 
     prep_account_number = re.sub(r'\D', '', str(account_number))
 
