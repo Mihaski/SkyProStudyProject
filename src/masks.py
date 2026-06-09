@@ -1,8 +1,14 @@
 import re
 
+from typing import Union
 
-def get_mask_card_number(card_number: str) -> str:
+
+def get_mask_card_number(card_number: Union[str, None] = None) -> str:
     """Hide card number"""
+
+    if card_number is None:
+        return "Ошибка: пустой ввод"
+
     prep_card_number = re.sub(r'\D', '', str(card_number))
 
     if len(prep_card_number) != 16:
