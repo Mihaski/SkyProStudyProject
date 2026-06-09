@@ -1,6 +1,4 @@
 # This is a sample Python script.
-from src import masks
-
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
@@ -16,5 +14,3 @@ if __name__ == '__main__':
     print_hi('PyCharm')
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
-
-#print(masks.get_mask_account("73654108430135874305"))

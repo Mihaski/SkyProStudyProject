@@ -1,6 +1,11 @@
 import pytest
 
-from src.widget import mask_account_card, get_date
+from src.widget import get_date, mask_account_card
+
+
+@pytest.fixture
+def test_output_fixture_fail():
+    return "Ошибка"
 
 
 @pytest.mark.parametrize("account_info, expected", [
@@ -27,6 +32,11 @@ def test_mask_account_card(account_info, expected):
     assert mask_account_card(account_info) == expected
 
 
+def test_mask_account_card_fail(test_output_fixture_fail):
+    """тест ошибки"""
+    assert test_output_fixture_fail in mask_account_card("sdasdasdasd")
+
+
 @pytest.mark.parametrize("unformatted_date, expected", [
     # Корректные даты
     ("2024-12-25T12:34:56", "25.12.2024"),
@@ -44,7 +54,7 @@ def test_mask_account_card(account_info, expected):
     ("25-12-2024T12:34:56", ValueError),
     ("20241225T123456", ValueError),
 
-    #Отсутсвует дата
+    # Отсутсвует дата
     ("", ValueError),
     ("фывфывфывфыв", ValueError),
     ("232323232323", ValueError),

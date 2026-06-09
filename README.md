@@ -41,3 +41,7 @@ git clone https://github.com/Mihaski/SkyProStudyProject/tree/main
 {'id': 615064591, 'state': 'CANCELED', 'date': '2018-10-14T08:21:33.419441'}, 
 {'id': 594226727, 'state': 'CANCELED', 'date': '2018-09-12T21:27:25.241689'}, 
 {'id': 939719570, 'state': 'EXECUTED', 'date': '2018-06-30T02:08:58.425572'}]
+
+## Тесты:
+
+Написано 42 теста, покрывают 100% функций в проекте на 9 июня 26 года

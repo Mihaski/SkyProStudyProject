@@ -1,6 +1,6 @@
 import re
 
-from utils import has_non_digit_except_spaces
+from src.utils import has_non_digit_except_spaces
 
 
 def get_mask_card_number(card_number: str) -> str:
