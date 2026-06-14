@@ -9,7 +9,7 @@ def mask_account_card(account_info: str) -> str:
     if not account_info or account_info.strip() == "":
         return "Ошибка: пустой ввод"
 
-    if '\n' in account_info:
+    if "\n" in account_info:
         return "Ошибка: некорректный ввод (содержит перенос строки)"
 
     parts = account_info.split()
