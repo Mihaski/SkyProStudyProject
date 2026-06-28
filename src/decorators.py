@@ -46,7 +46,7 @@ def log(filename: str = "stdout"):
                 else:
                     print(log_message, end='')
 
-                # Перебрасываем исключение дальше
+                # Перебрасываем исключение дальше, чтобы поведение было ожидаемым
                 raise
 
         return my_wrapper
