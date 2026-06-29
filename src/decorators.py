@@ -1,14 +1,14 @@
-from datetime import datetime
 from functools import wraps
 
+from utils import write_or_print
 
-def log(filename: str = "stdout"):
+
+def my_log(filename: str = "stdout"):
     """ Decorator for logging functions """
 
     def decorator_log(func):
         @wraps(func)
         def my_wrapper(*args, **kwargs):
-            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
             # Формируем строку с аргументами
             args_str = ', '.join(repr(arg) for arg in args)
@@ -16,38 +16,30 @@ def log(filename: str = "stdout"):
             all_args = ', '.join(filter(None, [args_str, kwargs_str]))
 
             try:
-                # Выполняем функцию
+                begin_message = f"Начало работы {func.__name__}\n"
+                write_or_print(begin_message, filename)
+
                 result = func(*args, **kwargs)
 
-                # Формируем сообщение об успехе
-                log_message = (f"[{timestamp}] УСПЕХ: {func.__name__}({all_args}) -> {repr(result)}\n"
-                )
+                log_message = f"{func.__name__} ok\n"
 
                 # Записываем лог
-                if filename != "stdout":
-                    with open(filename, 'a', encoding='utf-8') as f:
-                        f.write(log_message)
-                else:
-                    print(log_message, end='')
+                write_or_print(log_message, filename)
 
                 return result
 
             except Exception as e:
                 # Формируем сообщение об ошибке
-                log_message = (
-                    f"[{timestamp}] ОШИБКА: {func.__name__}({all_args}) -> "
-                    f"{type(e).__name__}: {str(e)}\n"
-                )
+                log_message = f"{func.__name__} error: {type(e).__name__}. Inputs: ({all_args})\n"
 
                 # Записываем лог
-                if filename != "stdout":
-                    with open(filename, 'a', encoding='utf-8') as f:
-                        f.write(log_message)
-                else:
-                    print(log_message, end='')
+                write_or_print(log_message, filename)
 
                 # Перебрасываем исключение дальше, чтобы поведение было ожидаемым
                 raise
+            finally:
+                end_message = f"Конец работы {func.__name__}\n"
+                write_or_print(end_message, filename)
 
         return my_wrapper
 
