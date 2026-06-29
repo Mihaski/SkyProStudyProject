@@ -1,6 +1,6 @@
 from functools import wraps
 
-from utils import write_or_print
+from src.utils import write_or_print
 
 
 def my_log(filename: str = "stdout"):

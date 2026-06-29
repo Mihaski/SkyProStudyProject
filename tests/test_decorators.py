@@ -1,6 +1,6 @@
 import pytest
 
-from decorators import my_log
+from src.decorators import my_log
 
 
 def test_log_to_stdout_success(capsys):
