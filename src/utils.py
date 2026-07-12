@@ -21,7 +21,7 @@ def djecson_from_path(file_path: str) -> list[dict]:
 
     # Проверяем существование файла
     if not os.path.exists(file_path):
-        return []
+        return ['check']
 
     # Проверяем, что файл не пустой
     if os.path.getsize(file_path) == 0:
