@@ -32,9 +32,9 @@ def djecson_from_path(file_path: str) -> list[dict]:
     # Преобразование из локального файла
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
-            return json.load(file)
-
-
+            data = json.load(file)
+            # Гарантируем, что возвращаем список
+            return data if isinstance(data, list) else []
     except JSONDecodeError:
         # Возвращаем пустой список при любой ошибке
         return []
