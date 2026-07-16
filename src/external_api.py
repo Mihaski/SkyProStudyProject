@@ -29,7 +29,7 @@ BASE_URL = "https://api.apilayer.com"
 #     print(f"Result: {data.get('result')}")
 
 def convert_currency(quantity: float, from_currency: str, to_currency: str = "RUB") -> float:
-    """ Конвертирует сумму из  валюты from_currency в to_currency через внешнее API. """
+    """ Конвертирует сумму из валюты from_currency в to_currency через внешнее API. """
 
     if not API_KEY:
         print("Предупреждение: API ключ не настроен. Конвертация недоступна.")
@@ -37,18 +37,21 @@ def convert_currency(quantity: float, from_currency: str, to_currency: str = "RU
         return -0.1
 
     try:
-        # Формируем запрос к API
         url = f"{BASE_URL}/exchangerates_data/convert?to={from_currency}&from={to_currency}&amount={quantity}"
 
         response = requests.get(url, timeout=10)
-        response.raise_for_status()  # Проверяем статус ответа
+        response.raise_for_status()
 
         data = response.json()
 
-        # Проверяем успешность запроса
         if data.get('success'):
-            results = data.get('results', {})
-            return float(results)
+            results = data.get('results')
+            # Для тестов по большей части кусок
+            if results is not None:
+                return float(results)
+            else:
+                print("Ошибка: в ответе API отсутствует поле 'results'")
+                return -0.1
         else:
             error_msg = data.get('error', {}).get('info', 'Неизвестная ошибка')
             print(f"Ошибка API: {error_msg}")
@@ -58,7 +61,7 @@ def convert_currency(quantity: float, from_currency: str, to_currency: str = "RU
         print(f"Ошибка при запросе к API: {e}")
         # Код ошибки будет todo
         return -0.1
-    except (KeyError, ValueError) as e:
+    except (KeyError, ValueError, TypeError) as e:
         print(f"Ошибка при обработке ответа API: {e}")
         # Код ошибки будет todo
         return -0.1
