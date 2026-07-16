@@ -10,14 +10,8 @@ def rub_transaction():
     """Фикстура транзакции в рублях"""
     return {
         "id": 1,
-        "operationAmount": {
-            "amount": "1500.50",
-            "currency": {
-                "code": "RUB",
-                "name": "Рубль"
-            }
-        },
-        "description": "Покупка продуктов"
+        "operationAmount": {"amount": "1500.50", "currency": {"code": "RUB", "name": "Рубль"}},
+        "description": "Покупка продуктов",
     }
 
 
@@ -26,14 +20,8 @@ def usd_transaction():
     """Фикстура транзакции в долларах"""
     return {
         "id": 2,
-        "operationAmount": {
-            "amount": "100.00",
-            "currency": {
-                "code": "USD",
-                "name": "Доллар США"
-            }
-        },
-        "description": "Покупка в США"
+        "operationAmount": {"amount": "100.00", "currency": {"code": "USD", "name": "Доллар США"}},
+        "description": "Покупка в США",
     }
 
 
@@ -42,14 +30,8 @@ def eur_transaction():
     """Фикстура транзакции в евро"""
     return {
         "id": 3,
-        "operationAmount": {
-            "amount": "75.50",
-            "currency": {
-                "code": "EUR",
-                "name": "Евро"
-            }
-        },
-        "description": "Покупка в Европе"
+        "operationAmount": {"amount": "75.50", "currency": {"code": "EUR", "name": "Евро"}},
+        "description": "Покупка в Европе",
     }
 
 
@@ -58,18 +40,12 @@ def unknown_currency_transaction():
     """Фикстура транзакции с неизвестной валютой"""
     return {
         "id": 4,
-        "operationAmount": {
-            "amount": "1000.00",
-            "currency": {
-                "code": "GBP",
-                "name": "Фунт стерлингов"
-            }
-        },
-        "description": "Покупка в Великобритании"
+        "operationAmount": {"amount": "1000.00", "currency": {"code": "GBP", "name": "Фунт стерлингов"}},
+        "description": "Покупка в Великобритании",
     }
 
 
-@patch('src.utils.convert_currency')  # Мокаем функцию конвертации
+@patch("src.utils.convert_currency")  # Мокаем функцию конвертации
 def test_get_transaction_amount_rub(mock_convert, rub_transaction):
     """Тест рублевых транзакций - convert_currency НЕ должен вызываться"""
     result = get_transaction_amount(rub_transaction)
@@ -80,7 +56,7 @@ def test_get_transaction_amount_rub(mock_convert, rub_transaction):
     mock_convert.assert_not_called()
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_usd(mock_convert, usd_transaction):
     """Тест долларовых транзакций с моком convert_currency"""
     # Настраиваем мок
@@ -94,7 +70,7 @@ def test_get_transaction_amount_usd(mock_convert, usd_transaction):
     assert isinstance(result, float)
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_eur(mock_convert, eur_transaction):
     """Тест евро транзакций с моком convert_currency"""
     mock_convert.return_value = "7550.00"
@@ -105,7 +81,7 @@ def test_get_transaction_amount_eur(mock_convert, eur_transaction):
     assert result == 7550.00
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_unknown_currency(mock_convert, unknown_currency_transaction):
     """Тест с неизвестной валютой - convert_currency НЕ должен вызываться"""
     result = get_transaction_amount(unknown_currency_transaction)
@@ -115,7 +91,7 @@ def test_get_transaction_amount_unknown_currency(mock_convert, unknown_currency_
     mock_convert.assert_not_called()
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_usd_with_mock_side_effect(mock_convert, usd_transaction):
     """Тест с использованием side_effect для имитации разных курсов"""
     # Используем side_effect для последовательных вызовов
@@ -137,7 +113,7 @@ def test_get_transaction_amount_usd_with_mock_side_effect(mock_convert, usd_tran
     assert mock_convert.call_count == 3
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_convert_returns_string(mock_convert, usd_transaction):
     """Тест, когда convert_currency возвращает строку"""
     mock_convert.return_value = "7500.50"
@@ -147,7 +123,7 @@ def test_get_transaction_amount_convert_returns_string(mock_convert, usd_transac
     assert isinstance(result, float)
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_convert_returns_float(mock_convert, usd_transaction):
     """Тест, когда convert_currency возвращает float"""
     mock_convert.return_value = 7500.50
@@ -157,7 +133,7 @@ def test_get_transaction_amount_convert_returns_float(mock_convert, usd_transact
     assert isinstance(result, float)
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_convert_returns_int(mock_convert, usd_transaction):
     """Тест, когда convert_currency возвращает int"""
     mock_convert.return_value = 7500
@@ -167,7 +143,7 @@ def test_get_transaction_amount_convert_returns_int(mock_convert, usd_transactio
     assert isinstance(result, float)
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_api_error(mock_convert, usd_transaction):
     """Тест обработки ошибки API - функция должна пробросить исключение"""
     mock_convert.side_effect = Exception("API Error")
@@ -180,7 +156,7 @@ def test_get_transaction_amount_api_error(mock_convert, usd_transaction):
     mock_convert.assert_called_once()
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_convert_returns_none(mock_convert, usd_transaction):
     """Тест, когда convert_currency возвращает None"""
     mock_convert.return_value = None
@@ -190,23 +166,21 @@ def test_get_transaction_amount_convert_returns_none(mock_convert, usd_transacti
         get_transaction_amount(usd_transaction)
 
 
-@patch('src.utils.convert_currency')
-@pytest.mark.parametrize("currency, amount, mock_rate, expected", [
-    ("USD", "100.00", "7500.00", 7500.00),
-    ("EUR", "100.00", "11000.00", 11000.00),
-    ("USD", "50.50", "3787.50", 3787.50),
-    ("EUR", "25.25", "2777.50", 2777.50),
-])
+@patch("src.utils.convert_currency")
+@pytest.mark.parametrize(
+    "currency, amount, mock_rate, expected",
+    [
+        ("USD", "100.00", "7500.00", 7500.00),
+        ("EUR", "100.00", "11000.00", 11000.00),
+        ("USD", "50.50", "3787.50", 3787.50),
+        ("EUR", "25.25", "2777.50", 2777.50),
+    ],
+)
 def test_get_transaction_amount_parametrized_with_mock(mock_convert, currency, amount, mock_rate, expected):
     """Параметризованный тест с моком для разных валют и сумм"""
     mock_convert.return_value = mock_rate
 
-    transaction = {
-        "operationAmount": {
-            "amount": amount,
-            "currency": {"code": currency}
-        }
-    }
+    transaction = {"operationAmount": {"amount": amount, "currency": {"code": currency}}}
 
     result = get_transaction_amount(transaction)
 
@@ -215,7 +189,7 @@ def test_get_transaction_amount_parametrized_with_mock(mock_convert, currency, a
     assert isinstance(result, float)
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_usd_with_specific_rate(mock_convert, usd_transaction):
     """Тест с конкретным курсом конвертации"""
     # Мокаем функцию так, чтобы она возвращала конкретное значение
@@ -231,25 +205,24 @@ def test_get_transaction_amount_usd_with_specific_rate(mock_convert, usd_transac
     assert result == 7500.00
 
 
-@patch('src.utils.convert_currency')
-@pytest.mark.parametrize("currency, expected_call, expected_result", [
-    ("RUB", False, 100.00),
-    ("USD", True, 7500.00),
-    ("EUR", True, 7500.00),
-    ("GBP", False, -0.1),
-    ("JPY", False, -0.1),
-])
-def test_get_transaction_amount_check_currency_code_parametrized(mock_convert, currency, expected_call,
-                                                                 expected_result):
+@patch("src.utils.convert_currency")
+@pytest.mark.parametrize(
+    "currency, expected_call, expected_result",
+    [
+        ("RUB", False, 100.00),
+        ("USD", True, 7500.00),
+        ("EUR", True, 7500.00),
+        ("GBP", False, -0.1),
+        ("JPY", False, -0.1),
+    ],
+)
+def test_get_transaction_amount_check_currency_code_parametrized(
+    mock_convert, currency, expected_call, expected_result
+):
     """Параметризованный тест проверки кода валюты"""
     mock_convert.return_value = 7500.00
 
-    transaction = {
-        "operationAmount": {
-            "amount": "100.00",
-            "currency": {"code": currency}
-        }
-    }
+    transaction = {"operationAmount": {"amount": "100.00", "currency": {"code": currency}}}
 
     result = get_transaction_amount(transaction)
 
@@ -262,7 +235,7 @@ def test_get_transaction_amount_check_currency_code_parametrized(mock_convert, c
         mock_convert.assert_not_called()
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_multiple_calls(mock_convert, usd_transaction, eur_transaction):
     """Тест нескольких вызовов с разными транзакциями"""
     mock_convert.side_effect = ["7500.00", "8300.00"]
@@ -280,18 +253,13 @@ def test_get_transaction_amount_multiple_calls(mock_convert, usd_transaction, eu
     assert calls[1][0] == ("75.50", "EUR", "RUB")
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_convert_not_called_for_unknown(mock_convert):
     """Тест, что convert_currency не вызывается для неподдерживаемых валют"""
     currencies = ["GBP", "JPY", "CNY", "CHF", "CAD"]
 
     for currency in currencies:
-        transaction = {
-            "operationAmount": {
-                "amount": "100.00",
-                "currency": {"code": currency}
-            }
-        }
+        transaction = {"operationAmount": {"amount": "100.00", "currency": {"code": currency}}}
 
         mock_convert.reset_mock()
         result = get_transaction_amount(transaction)
@@ -300,16 +268,11 @@ def test_get_transaction_amount_convert_not_called_for_unknown(mock_convert):
         mock_convert.assert_not_called()
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_returns_float_for_all_cases(mock_convert, usd_transaction):
     """Тест, что функция всегда возвращает float"""
     # Случай с RUB
-    rub_tx = {
-        "operationAmount": {
-            "amount": "100.50",
-            "currency": {"code": "RUB"}
-        }
-    }
+    rub_tx = {"operationAmount": {"amount": "100.50", "currency": {"code": "RUB"}}}
     result = get_transaction_amount(rub_tx)
     assert isinstance(result, float)
 
@@ -319,18 +282,13 @@ def test_get_transaction_amount_returns_float_for_all_cases(mock_convert, usd_tr
     assert isinstance(result, float)
 
     # Случай с неизвестной валютой
-    unknown_tx = {
-        "operationAmount": {
-            "amount": "100.00",
-            "currency": {"code": "GBP"}
-        }
-    }
+    unknown_tx = {"operationAmount": {"amount": "100.00", "currency": {"code": "GBP"}}}
     result = get_transaction_amount(unknown_tx)
     assert isinstance(result, float)
     assert result == -0.1
 
 
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_with_mock_properties(mock_convert, usd_transaction):
     """Тест с использованием свойств мока"""
     mock_convert.return_value = "7500.00"
@@ -350,7 +308,7 @@ def test_get_transaction_amount_with_mock_properties(mock_convert, usd_transacti
 
 
 # Если функция импортирует convert_currency из другого модуля
-@patch('src.utils.convert_currency')
+@patch("src.utils.convert_currency")
 def test_get_transaction_amount_imported_convert(mock_convert, usd_transaction):
     """Тест с моком импортированной функции"""
     mock_convert.return_value = "7500.00"

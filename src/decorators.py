@@ -4,16 +4,16 @@ from src.utils import write_or_print
 
 
 def my_log(filename: str = "stdout"):
-    """ Decorator for logging functions """
+    """Decorator for logging functions"""
 
     def decorator_log(func):
         @wraps(func)
         def my_wrapper(*args, **kwargs):
 
             # Формируем строку с аргументами
-            args_str = ', '.join(repr(arg) for arg in args)
-            kwargs_str = ', '.join(f"{k}={repr(v)}" for k, v in kwargs.items())
-            all_args = ', '.join(filter(None, [args_str, kwargs_str]))
+            args_str = ", ".join(repr(arg) for arg in args)
+            kwargs_str = ", ".join(f"{k}={repr(v)}" for k, v in kwargs.items())
+            all_args = ", ".join(filter(None, [args_str, kwargs_str]))
 
             try:
                 begin_message = f"Начало работы {func.__name__}\n"

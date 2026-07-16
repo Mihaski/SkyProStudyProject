@@ -12,10 +12,10 @@ def has_non_digit_except_spaces(text):
 def write_or_print(message, filename):
     """Записывает сообщение в файл или выводит в консоль"""
     if filename != "stdout":
-        with open(filename, 'a', encoding='utf-8') as f:
+        with open(filename, "a", encoding="utf-8") as f:
             f.write(message)
     else:
-        print(message, end='')
+        print(message, end="")
 
 
 def djecson_from_path(file_path: str) -> list[dict]:
@@ -31,7 +31,7 @@ def djecson_from_path(file_path: str) -> list[dict]:
 
     # Преобразование из локального файла
     try:
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             data = json.load(file)
             # Гарантируем, что возвращаем список
             return data if isinstance(data, list) else []
@@ -41,20 +41,20 @@ def djecson_from_path(file_path: str) -> list[dict]:
 
 
 def get_transaction_amount(transaction: dict) -> float:
-    """ Возвращает сумму из транзакции в рублях.
-        Транзакция - моделька, тип python объекта словарь. """
+    """Возвращает сумму из транзакции в рублях.
+    Транзакция - моделька, тип python объекта словарь."""
 
     # Извлекаем сумму и валюту из транзакции
-    amount = transaction['operationAmount']['amount']
-    currency = transaction['operationAmount']['currency']['code']
+    amount = transaction["operationAmount"]["amount"]
+    currency = transaction["operationAmount"]["currency"]["code"]
 
     # Если валюта не указана или это рубли, возвращаем сумму без изменений
-    if currency == 'RUB':
+    if currency == "RUB":
         return float(amount)
 
     # Для USD и EUR используем API для конвертации
-    if currency == 'USD' or currency == 'EUR':
-        prep = convert_currency(amount, currency, 'RUB')
+    if currency == "USD" or currency == "EUR":
+        prep = convert_currency(amount, currency, "RUB")
         return float(prep)
 
     # Код ошибки будет todo

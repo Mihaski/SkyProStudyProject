@@ -63,12 +63,12 @@ def test_log_to_file_success(tmp_path):
     assert result == 5
     assert log_file.exists()
 
-    content = log_file.read_text(encoding='utf-8')
+    content = log_file.read_text(encoding="utf-8")
     assert "Начало работы add" in content
     assert "add ok" in content
     assert "Конец работы add" in content
     # Проверяем порядок
-    lines = content.strip().split('\n')
+    lines = content.strip().split("\n")
     assert lines[0] == "Начало работы add"
     assert lines[1] == "add ok"
     assert lines[2] == "Конец работы add"
@@ -86,7 +86,7 @@ def test_log_to_file_exception(tmp_path):
     with pytest.raises(ZeroDivisionError):
         divide(10, 0)
 
-    content = log_file.read_text(encoding='utf-8')
+    content = log_file.read_text(encoding="utf-8")
     assert "Начало работы divide" in content
     assert "divide error: ZeroDivisionError. Inputs: (10, 0)" in content
     assert "Конец работы divide" in content
