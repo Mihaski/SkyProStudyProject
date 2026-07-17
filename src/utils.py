@@ -35,7 +35,7 @@ def djecson_from_path(file_path: str) -> list[dict]:
             data = json.load(file)
             # Гарантируем, что возвращаем список
             return data if isinstance(data, list) else []
-    except JSONDecodeError:
+    except JSONDecodeError, FileNotFoundError:
         # Возвращаем пустой список при любой ошибке
         return []
 

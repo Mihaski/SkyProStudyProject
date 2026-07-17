@@ -20,18 +20,19 @@ def convert_currency(quantity: float, from_currency: str, to_currency: str = "RU
         return -0.1
 
     try:
-        url = f"{BASE_URL}/exchangerates_data/convert?to={from_currency}&from={to_currency}&amount={quantity}"
+        url = f"{BASE_URL}/exchangerates_data/convert?to={to_currency}&from={from_currency}&amount={quantity}"
+        headers = {"apikey": API_KEY}
 
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
 
         data = response.json()
 
         if data.get("success"):
-            results = data.get("results")
+            result = data.get("result")
             # Для тестов по большей части кусок
-            if results is not None:
-                return float(results)
+            if result is not None:
+                return float(result)
             else:
                 print("Ошибка: в ответе API отсутствует поле 'results'")
                 return -0.1
