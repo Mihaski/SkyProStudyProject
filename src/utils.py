@@ -11,7 +11,7 @@ logger_utils = setup_logger("utils", LOG_FILE_NAME)
 
 
 def has_non_digit_except_spaces(text):
-    logger_utils.debug(f"Проверка текста на наличие нецифровых символов: {text}")
+    logger_utils.debug(f"Проверка текста на наличие не цифровых символов: {text}")
     result = any(not (c.isdigit() or c.isspace()) for c in text)
     logger_utils.debug(f"Результат проверки: {result}")
     return result

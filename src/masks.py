@@ -15,20 +15,20 @@ def get_mask_card_number(card_number: str) -> str:
 
     if has_non_digit_except_spaces(card_number):
         error_msg = "Ошибка: присутствуют буквы"
-        logger_masks.error(f"Ошибка валидации: {error_msg}, входные данные: {card_number}")
+        logger_masks.error(f"Ошибка: {error_msg}, входные данные: {card_number}")
         return error_msg
 
     if card_number == "":
         error_msg = "Ошибка: пустая ввод"
-        logger_masks.warning(f"Ошибка валидации: {error_msg}")
+        logger_masks.error(f"Ошибка: {error_msg}")
         return error_msg
 
     prep_card_number = re.sub(r"\D", "", str(card_number))
 
     if len(prep_card_number) != 16:
         error_msg = "Ошибка: количество символов в номере больше или меньше"
-        logger_masks.warning(
-            f"Ошибка валидации: {error_msg}, длина: {len(prep_card_number)}, входные данные: {card_number}")
+        logger_masks.error(
+            f"Ошибка: {error_msg}, длина: {len(prep_card_number)}, входные данные: {card_number}")
         return error_msg
 
     result = f"{prep_card_number[0:4]} {prep_card_number[4:6]}** **** {prep_card_number[12:16]}"
@@ -43,15 +43,15 @@ def get_mask_account(account_number: str) -> str:
 
     if has_non_digit_except_spaces(account_number):
         error_msg = "Ошибка: присутствуют буквы"
-        logger_masks.error(f"Ошибка валидации: {error_msg}, входные данные: {account_number}")
+        logger_masks.error(f"Ошибка: {error_msg}, входные данные: {account_number}")
         return error_msg
 
     prep_account_number = re.sub(r"\D", "", str(account_number))
 
     if len(prep_account_number) < 4:
         error_msg = "Ошибка: номер счёта должен содержать минимум 4 цифры"
-        logger_masks.warning(
-            f"Ошибка валидации: {error_msg}, длина: {len(prep_account_number)}, входные данные: {account_number}")
+        logger_masks.error(
+            f"Ошибка: {error_msg}, длина: {len(prep_account_number)}, входные данные: {account_number}")
         return error_msg
 
     result = f"**{prep_account_number[-4:]}"
