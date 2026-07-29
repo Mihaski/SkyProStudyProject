@@ -18,7 +18,6 @@ def get_transactions_from_csv(csv_file: str) -> list[dict]:
     try:
         with open(csv_file, 'r', encoding='utf-8') as op_file:
             csv_reader = csv.DictReader(op_file, delimiter=';')
-            next(csv_reader)
             for row in csv_reader:
                 transactions.append(row)
     except FileNotFoundError:
