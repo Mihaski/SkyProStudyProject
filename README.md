@@ -176,6 +176,25 @@ def card_number():
     pass
 ```
 
+##### pandas_module
+
+модуль с функциями получения транзакций из csv и xlsx
+
+обе функции принимают один параметр путь файла
+```python
+def get_transactions_from_csv(csv_file: str) -> list[dict]:
+    transactions: list[dict] = []
+    ...
+    return transactions
+
+
+def get_transactions_from_xlsx(excel_file: str) -> list[dict]:
+    transactions: list[dict] = []
+    ...
+    return transactions
+```
+
+
 ## Тесты:
 
-Написано 100 тестов, покрывают 98% функций в проекте на 29 июня 26 года
+Написано 284 тестов, покрывают 92% функций в проекте на 30 июля 26 года
