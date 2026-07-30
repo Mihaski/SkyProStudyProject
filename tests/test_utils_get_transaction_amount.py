@@ -155,7 +155,7 @@ def test_get_transaction_amount_api_error(mock_convert, usd_transaction):
 
     # проверяем вызов с правильными аргументами
     # внимание: amount передаётся как строка '100.00', а не число 100.0
-    mock_convert.assert_called_once_with('100.00', 'USD', 'RUB')
+    mock_convert.assert_called_once_with("100.00", "USD", "RUB")
 
 
 @patch("src.utils.convert_currency")
@@ -167,7 +167,7 @@ def test_get_transaction_amount_convert_returns_none(mock_convert, usd_transacti
 
     # ожидаем -0.1, так как функция перехватывает все исключения
     assert result == -0.1
-    mock_convert.assert_called_once_with('100.00', 'USD', 'RUB')
+    mock_convert.assert_called_once_with("100.00", "USD", "RUB")
 
 
 @patch("src.utils.convert_currency")
