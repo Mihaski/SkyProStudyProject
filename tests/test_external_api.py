@@ -6,8 +6,8 @@ import requests
 
 from src.external_api import API_KEY, BASE_URL, convert_currency
 
-# ==================== ФИКСТУРЫ ====================
 
+# ==================== ФИКСТУРЫ ====================
 
 @pytest.fixture
 def mock_api_key():
@@ -18,7 +18,6 @@ def mock_api_key():
 
 # ==================== ТЕСТЫ ====================
 
-
 @patch("src.external_api.API_KEY", "test_api_key_123")
 @patch("src.external_api.requests.get")
 def test_convert_currency_success_usd_to_rub(mock_get, mock_api_key):
@@ -27,15 +26,15 @@ def test_convert_currency_success_usd_to_rub(mock_get, mock_api_key):
     mock_response.status_code = 200
     mock_response.json.return_value = {
         "success": True,
-        "results": 7500.50,  # Правильный ключ - 'results' (множественное число)
+        "result": 7500.50,  # ✅
     }
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
     result = convert_currency(100.00, "USD", "RUB")
 
-    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=USD&from=RUB&amount=100.0"
-    mock_get.assert_called_once_with(expected_url, timeout=10)
+    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=RUB&from=USD&amount=100.0"
+    mock_get.assert_called_once_with(expected_url, headers={'apikey': 'test_api_key_123'}, timeout=10)
     assert result == 7500.50
     assert isinstance(result, float)
 
@@ -46,14 +45,14 @@ def test_convert_currency_success_eur_to_usd(mock_get, mock_api_key):
     """Тест успешной конвертации EUR в USD"""
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "results": 108.50}
+    mock_response.json.return_value = {"success": True, "result": 108.50}  # ✅
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
     result = convert_currency(100.00, "EUR", "USD")
 
-    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=EUR&from=USD&amount=100.0"
-    mock_get.assert_called_once_with(expected_url, timeout=10)
+    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=USD&from=EUR&amount=100.0"
+    mock_get.assert_called_once_with(expected_url, headers={'apikey': 'test_api_key_123'}, timeout=10)
     assert result == 108.50
     assert isinstance(result, float)
 
@@ -141,12 +140,12 @@ def test_convert_currency_json_decode_error(mock_get, mock_api_key):
 @patch("src.external_api.API_KEY", "test_api_key_123")
 @patch("src.external_api.requests.get")
 def test_convert_currency_key_error(mock_get, mock_api_key):
-    """Тест при отсутствии ключа 'results' в ответе"""
+    """Тест при отсутствии ключа 'result' в ответе"""
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.json.return_value = {
         "success": True
-        # Нет ключа 'results'
+        # Нет ключа 'result'
     }
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
@@ -154,7 +153,6 @@ def test_convert_currency_key_error(mock_get, mock_api_key):
     result = convert_currency(100.00, "USD", "RUB")
 
     mock_get.assert_called_once()
-    # Функция должна вернуть -0.1 при ошибке
     assert result == -0.1
 
 
@@ -164,7 +162,7 @@ def test_convert_currency_value_error(mock_get, mock_api_key):
     """Тест при ошибке преобразования в float"""
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "results": "not_a_number"}
+    mock_response.json.return_value = {"success": True, "result": "not_a_number"}  # ✅
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
@@ -180,14 +178,14 @@ def test_convert_currency_default_to_currency(mock_get, mock_api_key):
     """Тест с to_currency по умолчанию (RUB)"""
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "results": 7500.50}
+    mock_response.json.return_value = {"success": True, "result": 7500.50}  # ✅
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
     result = convert_currency(100.00, "USD")  # to_currency не указан
 
-    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=USD&from=RUB&amount=100.0"
-    mock_get.assert_called_once_with(expected_url, timeout=10)
+    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=RUB&from=USD&amount=100.0"
+    mock_get.assert_called_once_with(expected_url, headers={'apikey': 'test_api_key_123'}, timeout=10)
     assert result == 7500.50
 
 
@@ -197,14 +195,14 @@ def test_convert_currency_zero_amount(mock_get, mock_api_key):
     """Тест с нулевой суммой"""
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "results": 0.0}
+    mock_response.json.return_value = {"success": True, "result": 0.0}  # ✅
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
     result = convert_currency(0.00, "USD", "RUB")
 
-    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=USD&from=RUB&amount=0.0"
-    mock_get.assert_called_once_with(expected_url, timeout=10)
+    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=RUB&from=USD&amount=0.0"
+    mock_get.assert_called_once_with(expected_url, headers={'apikey': 'test_api_key_123'}, timeout=10)
     assert result == 0.0
 
 
@@ -214,14 +212,14 @@ def test_convert_currency_negative_amount(mock_get, mock_api_key):
     """Тест с отрицательной суммой"""
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "results": -7500.50}
+    mock_response.json.return_value = {"success": True, "result": -7500.50}  # ✅
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
     result = convert_currency(-100.00, "USD", "RUB")
 
-    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=USD&from=RUB&amount=-100.0"
-    mock_get.assert_called_once_with(expected_url, timeout=10)
+    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=RUB&from=USD&amount=-100.0"
+    mock_get.assert_called_once_with(expected_url, headers={'apikey': 'test_api_key_123'}, timeout=10)
     assert result == -7500.50
 
 
@@ -231,14 +229,14 @@ def test_convert_currency_large_amount(mock_get, mock_api_key):
     """Тест с большим числом"""
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "results": 7500000.00}
+    mock_response.json.return_value = {"success": True, "result": 7500000.00}  # ✅
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
     result = convert_currency(100000.00, "USD", "RUB")
 
-    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=USD&from=RUB&amount=100000.0"
-    mock_get.assert_called_once_with(expected_url, timeout=10)
+    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=RUB&from=USD&amount=100000.0"
+    mock_get.assert_called_once_with(expected_url, headers={'apikey': 'test_api_key_123'}, timeout=10)
     assert result == 7500000.00
 
 
@@ -248,19 +246,18 @@ def test_convert_currency_float_amount(mock_get, mock_api_key):
     """Тест с дробной суммой"""
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "results": 7550.75}
+    mock_response.json.return_value = {"success": True, "result": 7550.75}  # ✅
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
     result = convert_currency(100.50, "EUR", "RUB")
 
-    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=EUR&from=RUB&amount=100.5"
-    mock_get.assert_called_once_with(expected_url, timeout=10)
+    expected_url = f"{BASE_URL}/exchangerates_data/convert?to=RUB&from=EUR&amount=100.5"
+    mock_get.assert_called_once_with(expected_url, headers={'apikey': 'test_api_key_123'}, timeout=10)
     assert result == 7550.75
 
 
 # ==================== ИНТЕГРАЦИОННЫЙ ТЕСТ ====================
-
 
 @pytest.mark.integration
 def test_convert_currency_integration():
@@ -274,12 +271,10 @@ def test_convert_currency_integration():
     if result == -0.1:
         pytest.skip("API вернул ошибку (возможно, невалидный ключ)")
     assert result > 0
-    # Курс USD/RUB обычно в районе 60-120
     assert 6000 < result < 12000
 
 
 # ==================== ТЕСТЫ НА КОРРЕКТНОСТЬ URL ====================
-
 
 @patch("src.external_api.API_KEY", "test_api_key_123")
 @patch("src.external_api.requests.get")
@@ -287,23 +282,22 @@ def test_convert_currency_url_formatting(mock_get, mock_api_key):
     """Тест правильности форматирования URL"""
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "results": 100}
+    mock_response.json.return_value = {"success": True, "result": 100}  # ✅
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
     test_cases = [
-        (100.00, "USD", "RUB", f"{BASE_URL}/exchangerates_data/convert?to=USD&from=RUB&amount=100.0"),
-        (50.50, "EUR", "USD", f"{BASE_URL}/exchangerates_data/convert?to=EUR&from=USD&amount=50.5"),
-        (75.25, "GBP", "EUR", f"{BASE_URL}/exchangerates_data/convert?to=GBP&from=EUR&amount=75.25"),
+        (100.00, "USD", "RUB", f"{BASE_URL}/exchangerates_data/convert?to=RUB&from=USD&amount=100.0"),
+        (50.50, "EUR", "USD", f"{BASE_URL}/exchangerates_data/convert?to=USD&from=EUR&amount=50.5"),
+        (75.25, "GBP", "EUR", f"{BASE_URL}/exchangerates_data/convert?to=EUR&from=GBP&amount=75.25"),
     ]
 
     for amount, from_currency, to_currency, expected_url in test_cases:
         convert_currency(amount, from_currency, to_currency)
-        mock_get.assert_called_with(expected_url, timeout=10)
+        mock_get.assert_called_with(expected_url, headers={'apikey': 'test_api_key_123'}, timeout=10)
 
 
 # ==================== ТЕСТЫ НА ВОЗВРАЩАЕМЫЕ ТИПЫ ====================
-
 
 @patch("src.external_api.API_KEY", "test_api_key_123")
 @patch("src.external_api.requests.get")
@@ -312,7 +306,7 @@ def test_convert_currency_always_returns_float(mock_get, mock_api_key):
     # Успешный случай
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "results": 7500.00}
+    mock_response.json.return_value = {"success": True, "result": 7500.00}  # ✅
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
@@ -334,14 +328,13 @@ def test_convert_currency_always_returns_float(mock_get, mock_api_key):
 
 # ==================== ТЕСТЫ НА ГРАНИЧНЫЕ ЗНАЧЕНИЯ ====================
 
-
 @patch("src.external_api.API_KEY", "test_api_key_123")
 @patch("src.external_api.requests.get")
 def test_convert_currency_edge_cases(mock_get, mock_api_key):
     """Тест граничных значений"""
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "results": 1.0}
+    mock_response.json.return_value = {"success": True, "result": 1.0}  # ✅
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
@@ -356,14 +349,13 @@ def test_convert_currency_edge_cases(mock_get, mock_api_key):
 
 # ==================== ТЕСТЫ С ИСПОЛЬЗОВАНИЕМ PATCH.OBJECT ====================
 
-
 def test_convert_currency_with_patch_object():
-    """Тест с использованием patch.object для мока requests.get"""
+    """Тест с использованием patch для мока requests.get"""
     with patch("src.external_api.API_KEY", "test_key"):
-        with patch.object(requests, "get") as mock_get:
+        with patch("src.external_api.requests.get") as mock_get:  # ✅ Вместо patch.object
             mock_response = Mock()
             mock_response.status_code = 200
-            mock_response.json.return_value = {"success": True, "results": 7500.50}
+            mock_response.json.return_value = {"success": True, "result": 7500.50}
             mock_response.raise_for_status = Mock()
             mock_get.return_value = mock_response
 
@@ -374,7 +366,6 @@ def test_convert_currency_with_patch_object():
 
 
 # ==================== ТЕСТЫ НА ОБРАБОТКУ РАЗНЫХ ВАЛЮТ ====================
-
 
 @patch("src.external_api.API_KEY", "test_api_key_123")
 @patch("src.external_api.requests.get")
@@ -389,24 +380,23 @@ def test_convert_currency_with_patch_object():
     ],
 )
 def test_convert_currency_different_currencies(
-    mock_get, mock_api_key, from_currency, to_currency, amount, expected_result
+        mock_get, mock_api_key, from_currency, to_currency, amount, expected_result
 ):
     """Параметризованный тест с разными валютами"""
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "results": expected_result}
+    mock_response.json.return_value = {"success": True, "result": expected_result}  # ✅
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
     result = convert_currency(amount, from_currency, to_currency)
 
-    expected_url = f"{BASE_URL}/exchangerates_data/convert?to={from_currency}&from={to_currency}&amount={amount}"
-    mock_get.assert_called_once_with(expected_url, timeout=10)
+    expected_url = f"{BASE_URL}/exchangerates_data/convert?to={to_currency}&from={from_currency}&amount={amount}"
+    mock_get.assert_called_once_with(expected_url, headers={'apikey': 'test_api_key_123'}, timeout=10)
     assert result == expected_result
 
 
 # ==================== ТЕСТ НА РЕАЛЬНЫЙ API ====================
-
 
 def test_convert_currency_real_api():
     """Тест с реальным API ключом (только если ключ настроен)"""
@@ -415,7 +405,6 @@ def test_convert_currency_real_api():
 
     result = convert_currency(100.00, "USD", "RUB")
 
-    # Если вернулся -0.1, значит что-то пошло не так, но не падаем
     if result == -0.1:
         pytest.skip("API вернул ошибку (возможно, невалидный ключ или лимиты)")
 

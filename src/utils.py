@@ -31,7 +31,8 @@ def write_or_print(message, filename):
     else:
         print(message, end="")
         logger_utils.info(
-            f"Вывод в консоль: {message[:100]}..." if len(message) > 100 else f"Вывод в консоль: {message}")
+            f"Вывод в консоль: {message[:100]}..." if len(message) > 100 else f"Вывод в консоль: {message}"
+        )
 
 
 def djecson_from_path(file_path: str) -> list[dict]:

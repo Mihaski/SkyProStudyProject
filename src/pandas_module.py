@@ -11,15 +11,26 @@ logger_pandas = setup_logger(MODULE_NAME, LOG_FILE_NAME)
 
 
 def get_transactions_from_csv(csv_file: str) -> list[dict]:
-    """ Returns a list of transactions from a csv file."""
+    """Returns a list of transactions from a csv file."""
     logger_pandas.info(f"Вызов функции get_transactions_from_csv с аргументом: {csv_file}")
 
-    transactions = []
+    transactions: list[dict] = []
     try:
-        with open(csv_file, 'r', encoding='utf-8') as op_file:
-            csv_reader = csv.DictReader(op_file, delimiter=';')
+        with open(csv_file, "r", encoding="utf-8") as op_file:
+            csv_reader = csv.DictReader(op_file, delimiter=";")
+
+            # Проверяем, что есть заголовки это для предотвращения выкидывания ворнинга в получении длины
+            if csv_reader.fieldnames is None:
+                logger_pandas.warning(f"В файле {csv_file} отсутствуют заголовки")
+                return transactions
+
+            expected_fields = len(csv_reader.fieldnames)
             for row in csv_reader:
-                transactions.append(row)
+                # Проверяем, что количество полей соответствует ожидаемому и что все значения не пустые
+                if len(row) == expected_fields and all(row.values()):
+                    transactions.append(row)
+                else:
+                    logger_pandas.warning(f"Пропущена некорректная строка в {csv_file}: {row}")
     except FileNotFoundError:
         logger_pandas.error(f"Ошибка файл не найден: вызов с параметром {csv_file}")
         return transactions
@@ -32,14 +43,14 @@ def get_transactions_from_csv(csv_file: str) -> list[dict]:
 
 
 def get_transactions_from_xlsx(excel_file: str) -> list[dict]:
-    """ Returns a list of transactions from an xlsx file."""
+    """Returns a list of transactions from an xlsx file."""
     logger_pandas.info(f"Вызов функции get_transactions_from_exls с аргументом: {excel_file}")
 
     # внимание s
-    transactions = []
+    transactions: list[dict] = []
     try:
         # only xlsx
-        excel_data = pd.read_excel(excel_file, engine='openpyxl')
+        excel_data = pd.read_excel(excel_file, engine="openpyxl")
 
         # Проверка на пустой DataFrame
         if excel_data.empty:
@@ -48,7 +59,7 @@ def get_transactions_from_xlsx(excel_file: str) -> list[dict]:
 
         for index, row in excel_data.iterrows():
             # Внимание нет s
-            transaction = {}
+            transaction: dict = {}
             for column in excel_data.columns:
                 value = row[column]
                 # Проверяем, не является ли значение NaN (пустым)
