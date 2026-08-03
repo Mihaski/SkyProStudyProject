@@ -1,5 +1,6 @@
 import logging
 import os
+from pathlib import Path
 
 # каталог логов
 LOG_DIR = "logs"
@@ -10,9 +11,10 @@ DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def setup_logger(name: str, log_file: str):
-    """     фабричная функция логгеров    """
-    if log_file is None:
-        log_file = name
+    """фабричная функция логгеров"""
+
+    # Создаём папку для логов, если её нет
+    Path(LOG_DIR).mkdir(exist_ok=True)
 
     # Путь к файлу лога
     log_path = os.path.join(LOG_DIR, f"{log_file}.log")
@@ -22,7 +24,7 @@ def setup_logger(name: str, log_file: str):
     logger.setLevel(logging.DEBUG)
 
     # Создаем обработчик для записи в файл
-    file_handler = logging.FileHandler(log_path, mode='w', encoding='utf-8')
+    file_handler = logging.FileHandler(log_path, mode="w", encoding="utf-8")
     file_handler.setLevel(logging.DEBUG)
 
     # Создаем форматтер

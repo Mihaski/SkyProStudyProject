@@ -27,8 +27,7 @@ def get_mask_card_number(card_number: str) -> str:
 
     if len(prep_card_number) != 16:
         error_msg = "Ошибка: количество символов в номере больше или меньше"
-        logger_masks.error(
-            f"Ошибка: {error_msg}, длина: {len(prep_card_number)}, входные данные: {card_number}")
+        logger_masks.error(f"Ошибка: {error_msg}, длина: {len(prep_card_number)}, входные данные: {card_number}")
         return error_msg
 
     result = f"{prep_card_number[0:4]} {prep_card_number[4:6]}** **** {prep_card_number[12:16]}"
@@ -50,8 +49,7 @@ def get_mask_account(account_number: str) -> str:
 
     if len(prep_account_number) < 4:
         error_msg = "Ошибка: номер счёта должен содержать минимум 4 цифры"
-        logger_masks.error(
-            f"Ошибка: {error_msg}, длина: {len(prep_account_number)}, входные данные: {account_number}")
+        logger_masks.error(f"Ошибка: {error_msg}, длина: {len(prep_account_number)}, входные данные: {account_number}")
         return error_msg
 
     result = f"**{prep_account_number[-4:]}"
