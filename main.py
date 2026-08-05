@@ -1,11 +1,11 @@
 # This is a sample Python script.
 from typing import Generator
 
-from generators import filter_by_currency, transaction_descriptions
-from pandas_module import get_transactions_from_csv, get_transactions_from_xlsx
-from processing import filter_by_state, sort_by_date, process_bank_search
+from src.generators import filter_by_currency, transaction_descriptions
+from src.pandas_module import get_transactions_from_csv, get_transactions_from_xlsx
+from src.processing import filter_by_state, sort_by_date, process_bank_search
 from src.utils import djecson_from_path
-from widget import get_date, mask_account_card
+from src.widget import get_date, mask_account_card
 
 
 # Press Shift+F10 to execute it or replace it with your code.
