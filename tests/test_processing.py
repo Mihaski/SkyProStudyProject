@@ -1,6 +1,154 @@
 import pytest
 
-from src.processing import filter_by_state, sort_by_date, process_bank_search
+from src.processing import filter_by_state, sort_by_date, process_bank_search, process_bank_operations
+
+
+# тесты для process_bank_operations
+
+def test_process_bank_operations_exact_match():
+    """ точное совпадение категорий"""
+    data = [
+        {"description": "Перевод организации"},
+        {"description": "Перевод организации"},
+        {"description": "Открытие вклада"},
+        {"description": "Покупка в магазине"},
+    ]
+    categories = ["Перевод организации", "Открытие вклада"]
+
+    result = process_bank_operations(data, categories)
+
+    expected = {"Перевод организации": 2, "Открытие вклада": 1}
+    assert result == expected
+
+
+def test_process_bank_operations_partial_match():
+    """ частичное совпадение (благодаря re.search)"""
+    data = [
+        {"description": "Перевод организации"},
+        {"description": "Перевод с карты на карту"},
+        {"description": "Перевод со счета на счет"},
+        {"description": "Открытие вклада"},
+    ]
+    categories = ["Перевод", "Открытие"]
+
+    result = process_bank_operations(data, categories)
+
+    expected = {"Перевод": 3, "Открытие": 1}
+    assert result == expected
+
+
+def test_process_bank_operations_empty_data():
+    """ пустой список транзакций"""
+    data = []
+    categories = ["Перевод", "Открытие"]
+
+    result = process_bank_operations(data, categories)
+
+    expected = {"Перевод": 0, "Открытие": 0}
+    assert result == expected
+
+
+def test_process_bank_operations_empty_categories():
+    """ пустой список категорий"""
+    data = [
+        {"description": "Перевод организации"},
+        {"description": "Открытие вклада"},
+    ]
+    categories = []
+
+    result = process_bank_operations(data, categories)
+
+    assert result == {}
+
+
+def test_process_bank_operations_missing_description():
+    """ транзакция без поля description"""
+    data = [
+        {"description": "Перевод организации"},
+        {"id": 1, "amount": 100},  # Нет description
+        {"description": "Открытие вклада"},
+        {"id": 2, "amount": 200},  # Нет description
+    ]
+    categories = ["Перевод организации", "Открытие вклада"]
+
+    result = process_bank_operations(data, categories)
+
+    expected = {"Перевод организации": 1, "Открытие вклада": 1}
+    assert result == expected
+
+
+def test_process_bank_operations_empty_description():
+    """ пустое поле description"""
+    data = [
+        {"description": "Перевод организации"},
+        {"description": ""},  # Пустое описание
+        {"description": "Открытие вклада"},
+    ]
+    categories = ["Перевод организации", "Открытие вклада"]
+
+    result = process_bank_operations(data, categories)
+
+    expected = {"Перевод организации": 1, "Открытие вклада": 1}
+    assert result == expected
+
+
+def test_process_bank_operations_no_matches():
+    """ нет совпадений с категориями."""
+    data = [
+        {"description": "Перевод организации"},
+        {"description": "Открытие вклада"},
+    ]
+    categories = ["Покупка", "Оплата"]
+
+    result = process_bank_operations(data, categories)
+
+    expected = {"Покупка": 0, "Оплата": 0}
+    assert result == expected
+
+
+def test_process_bank_operations_case_sensitive():
+    """ учитывается регистр (re.search чувствителен к регистру)"""
+    data = [
+        {"description": "Перевод организации"},
+        {"description": "перевод организации"},  # С маленькой буквы
+        {"description": "ПЕРЕВОД ОРГАНИЗАЦИИ"},  # Все заглавные
+    ]
+    categories = ["Перевод организации"]
+
+    result = process_bank_operations(data, categories)
+
+    # Найдёт только точное совпадение с учётом регистра
+    expected = {"Перевод организации": 1}
+    assert result == expected
+
+
+def test_process_bank_operations_special_characters():
+    """ специальные символы в категориях"""
+    data = [
+        {"description": "Перевод (организации)"},
+        {"description": "Перевод [организации]"},
+        {"description": "Перевод {организации}"},
+    ]
+    categories = [r"Перевод \(организации\)", r"Перевод \[организации\]"]
+
+    result = process_bank_operations(data, categories)
+
+    expected = {r"Перевод \(организации\)": 1, r"Перевод \[организации\]": 1}
+    assert result == expected
+
+
+def test_process_bank_operations_multiple_categories_one_transaction():
+    """ одна транзакция может попасть в несколько категорий"""
+    data = [
+        {"description": "Перевод организации"},  # Подходит под обе категории
+    ]
+    categories = ["Перевод", "Перевод организации"]
+
+    result = process_bank_operations(data, categories)
+
+    # Так как у вас нет break, транзакция засчитается в обе категории
+    expected = {"Перевод": 1, "Перевод организации": 1}
+    assert result == expected
 
 
 # тесты для process_bank_search
@@ -12,22 +160,22 @@ def sample_transactions():
         {
             "id": 1,
             "description": "Перевод организации",
-            "amount": 100.50,
+            "date": "2019-08-26T10:50:58.294041",
         },
         {
             "id": 2,
             "description": "Покупка в магазине",
-            "amount": 250.00,
+            "date": "2019-08-26T10:50:58.294041",
         },
         {
             "id": 3,
             "description": "Перевод на карту",
-            "amount": 500.00,
+            "date": "2019-08-26T10:50:58.294041",
         },
         {
             "id": 4,
             "description": "Оплата коммунальных услуг",
-            "amount": 1500.00,
+            "date": "2019-08-26T10:50:58.294041",
         },
         {
             "id": 5,
