@@ -2,8 +2,8 @@ import logging
 import os
 from pathlib import Path
 
-# каталог логов
-LOG_DIR = "logs"
+# каталог логов Как обычно путь относительный был
+LOG_DIR = "C:\\Users\\mzabr\\PycharmProjects\\SkyProStudyProject\\logs"
 
 # Базовый формат для всех логов
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
