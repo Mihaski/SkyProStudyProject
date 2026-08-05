@@ -13,6 +13,9 @@ def get_mask_card_number(card_number: str) -> str:
 
     logger_masks.info(f"Вызов функции get_mask_card_number с аргументом: {card_number}")
 
+    if card_number is None:
+        return ""
+
     if has_non_digit_except_spaces(card_number):
         error_msg = "Ошибка: присутствуют буквы"
         logger_masks.error(f"Ошибка: {error_msg}, входные данные: {card_number}")

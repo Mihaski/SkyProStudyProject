@@ -1,8 +1,11 @@
 # This is a sample Python script.
+from typing import Generator
+
 from generators import filter_by_currency, transaction_descriptions
 from pandas_module import get_transactions_from_csv, get_transactions_from_xlsx
 from processing import filter_by_state, sort_by_date, process_bank_search
 from src.utils import djecson_from_path
+from widget import get_date, mask_account_card
 
 
 # Press Shift+F10 to execute it or replace it with your code.
@@ -24,6 +27,7 @@ def main():
     while True:
         if method == "1":
             print("Программа: Для обработки выбран JSON-файл.")
+            # путь относительный - можно лохануться внизу тоже
             transactions = djecson_from_path("data/operations.json")
             # print(transactions)
             break
@@ -93,10 +97,32 @@ def main():
 
     transaction_descriptions_gena = transaction_descriptions(transactions)
     for transaction in transactions:
-        prep_data = {}
-        prep_description = next(transaction_descriptions_gena)
-        prep_amount = transaction.get("amount")
-        print(transaction)
+        print(prep_format_sort_sample_transactions(transaction, transaction_descriptions_gena))
+
+
+def prep_format_sort_sample_transactions(transaction: dict, descript_gena: Generator[dict]) -> str:
+    # замьютил - работает нормально tut
+    # noinspection bad-argument-type
+    prep_data = get_date(transaction.get("date"))
+    # чисто ради того что бы попользоваться, так то кринж
+    prep_description = next(descript_gena)
+    # ругается что тип не может вычислить или чото такое
+    # noinspection unresolved-references
+    prep_amount = transaction.get("operationAmount").get("amount")
+    # noinspection unresolved-references
+    prep_name_currency = transaction.get("operationAmount").get("currency").get("code")
+    prep_from = transaction.get("from", "")
+    prep_to = transaction.get("to", "")
+
+    if not prep_from == "":
+        prep_from = f"{mask_account_card(prep_from)} -> "
+    if not prep_to == "":
+        prep_to = mask_account_card(prep_to)
+
+    formated_string = (f"{prep_data} {prep_description}\n"
+                       f"{prep_from}{prep_to}\n"
+                       f"Сумма: {prep_amount} {prep_name_currency}\n")
+    return formated_string
 
 
 # Press the green button in the gutter to run the script.

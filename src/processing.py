@@ -1,4 +1,7 @@
 import re
+from collections import Counter
+
+from src.utils import djecson_from_path
 
 
 def filter_by_state(list_dict: list[dict], state: str = "EXECUTED") -> list[dict]:
@@ -47,13 +50,15 @@ def process_bank_search(data: list[dict], search: str) -> list[dict]:
 
 
 def process_bank_operations(data: list[dict], categories: list) -> dict:
-    """ возвращает словарь: ключ категория, значение количество попадающих операций в categories"""
+    """ возвращает словарь (Counter?): ключ категория, значение количество попадающих операций в categories"""
     result = {category: 0 for category in categories}
 
     for item in data:
         description_search = item.get("description", "")
         for category in result:
-            if re.search(category, description_search):
+            if re.findall(category, description_search):
                 result[category] += 1
 
-    return result
+    counted_categories = Counter(result)
+    # я не совсем понял но как будто требование возвращение словаря и использовать каунтер не совсем сочетаются
+    return counted_categories
