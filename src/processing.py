@@ -44,3 +44,16 @@ def process_bank_search(data: list[dict], search: str) -> list[dict]:
             result.append(item)
 
     return result
+
+
+def process_bank_operations(data: list[dict], categories: list) -> dict:
+    """ возвращает словарь: ключ категория, значение количество попадающих операций в categories"""
+    result = {category: 0 for category in categories}
+
+    for item in data:
+        description_search = item.get("description", "")
+        for category in result:
+            if re.search(category, description_search):
+                result[category] += 1
+
+    return result
