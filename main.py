@@ -3,17 +3,16 @@ from typing import Generator
 
 from src.generators import filter_by_currency, transaction_descriptions
 from src.pandas_module import get_transactions_from_csv, get_transactions_from_xlsx
-from src.processing import filter_by_state, sort_by_date, process_bank_search
+from src.processing import filter_by_state, process_bank_search, sort_by_date
 from src.utils import djecson_from_path
 from src.widget import get_date, mask_account_card
-
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 
 def main():
-    """ главная функция - консольный интерфейс"""
+    """главная функция - консольный интерфейс"""
 
     print("Программа: Привет! Добро пожаловать в программу работы\n\
 с банковскими транзакциями.\n\
@@ -53,19 +52,14 @@ def main():
         if upper_second in ["EXECUTED", "CANCELED", "PENDING"]:
             break
         else:
-            print(f"Программа: Статус операции \"{status_filter}\" недоступен.")
+            print(f'Программа: Статус операции "{status_filter}" недоступен.')
 
     transactions = filter_by_state(transactions, upper_second)
 
     if input("Отсортировать операции по дате? Да/Нет\n").lower() == "да":
-        direction = input(
-            "Отсортировать по возрастанию или по убыванию?\n"
-        ).lower()
+        direction = input("Отсортировать по возрастанию или по убыванию?\n").lower()
 
-        transactions = sort_by_date(
-            transactions,
-            sort_by_decrease=(direction == "по убыванию")
-        )
+        transactions = sort_by_date(transactions, sort_by_decrease=(direction == "по убыванию"))
 
     if input("Выводить только рублевые транзакции? Да/Нет\n").lower() == "да":
         # transactions = [
@@ -80,16 +74,10 @@ def main():
 
     if input("Отфильтровать список транзакций по слову в описании? Да/Нет\n").lower() == "да":
         word = input("Введите слово: ")
-        transactions = process_bank_search(
-            transactions,
-            word
-        )
+        transactions = process_bank_search(transactions, word)
 
     if not transactions:
-        print(
-            "Не найдено ни одной транзакции, "
-            "подходящей под ваши условия фильтрации"
-        )
+        print("Не найдено ни одной транзакции, " "подходящей под ваши условия фильтрации")
         # выход из функции если ничего не подошло
         return
 
@@ -103,14 +91,14 @@ def main():
 def prep_format_sort_sample_transactions(transaction: dict, descript_gena: Generator[dict]) -> str:
     # замьютил - работает нормально tut
     # noinspection bad-argument-type
-    prep_data = get_date(transaction.get("date"))
+    prep_data = get_date(transaction.get("date", ""))
     # чисто ради того что бы попользоваться, так то кринж
     prep_description = next(descript_gena)
     # ругается что тип не может вычислить или чото такое
     # noinspection unresolved-references
-    prep_amount = transaction.get("operationAmount").get("amount")
+    prep_amount = transaction.get("operationAmount", "").get("amount", "")
     # noinspection unresolved-references
-    prep_name_currency = transaction.get("operationAmount").get("currency").get("code")
+    prep_name_currency = transaction.get("operationAmount", "").get("currency", "").get("code", "")
     prep_from = transaction.get("from", "")
     prep_to = transaction.get("to", "")
 
@@ -119,9 +107,9 @@ def prep_format_sort_sample_transactions(transaction: dict, descript_gena: Gener
     if not prep_to == "":
         prep_to = mask_account_card(prep_to)
 
-    formated_string = (f"{prep_data} {prep_description}\n"
-                       f"{prep_from}{prep_to}\n"
-                       f"Сумма: {prep_amount} {prep_name_currency}\n")
+    formated_string = (
+        f"{prep_data} {prep_description}\n" f"{prep_from}{prep_to}\n" f"Сумма: {prep_amount} {prep_name_currency}\n"
+    )
     return formated_string
 
 

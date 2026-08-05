@@ -1,8 +1,6 @@
 import re
 from collections import Counter
 
-from src.utils import djecson_from_path
-
 
 def filter_by_state(list_dict: list[dict], state: str = "EXECUTED") -> list[dict]:
     """Функция возвращает список словарей, у которых ключ state соответствует указанному значению."""
@@ -27,8 +25,8 @@ def sort_by_date(list_dict: list[dict], sort_by_decrease: bool = True) -> list[d
 
 
 def process_bank_search(data: list[dict], search: str) -> list[dict]:
-    """ возвращает список словарей с банковскими операциями найденных по строке search"""
-    result = []
+    """возвращает список словарей с банковскими операциями найденных по строке search"""
+    result: list[dict] = []
 
     # Если список пустой или запрос пустой - возвращаем пустой список
     if not data or not search:
@@ -50,7 +48,7 @@ def process_bank_search(data: list[dict], search: str) -> list[dict]:
 
 
 def process_bank_operations(data: list[dict], categories: list) -> dict:
-    """ возвращает словарь (Counter?): ключ категория, значение количество попадающих операций в categories"""
+    """возвращает словарь (Counter?): ключ категория, значение количество попадающих операций в categories"""
     result = {category: 0 for category in categories}
 
     for item in data:
