@@ -27,6 +27,12 @@ git clone https://github.com/Mihaski/SkyProStudyProject/tree/main
 
 ## Примеры:
 
+##### main():
+
+``` 
+Shift + F10 или запуск -> следуем инструкциям
+```
+
 ##### filter_by_state:
 
 ###### Выход функции со статусом по умолчанию 'EXECUTED'
@@ -197,4 +203,4 @@ def get_transactions_from_xlsx(excel_file: str) -> list[dict]:
 
 ## Тесты:
 
-Написано 284 тестов, покрывают 92% функций в проекте на 30 июля 26 года
+Написано 309 тестов, покрывают 93% функций в проекте на 05 августа 26 года

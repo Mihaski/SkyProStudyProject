@@ -5,7 +5,7 @@ def filter_by_currency(list_dict_transactions: list[dict], currency: str) -> Gen
     """Выдает lazy транзакции по имени (тут нет конкретики по ходу разбирёмся но :todo)"""
     for transaction in list_dict_transactions:
         try:
-            currency_name = transaction.get("operationAmount", {}).get("currency", {}).get("name")
+            currency_name = transaction.get("operationAmount", {}).get("currency", {}).get("code")
             if currency_name == currency:
                 yield transaction
         except (KeyError, TypeError, AttributeError):

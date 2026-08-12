@@ -8,8 +8,13 @@ LOG_FILE_NAME = "masks"
 logger_masks = setup_logger("masks", LOG_FILE_NAME)
 
 
-def get_mask_card_number(card_number: str) -> str:
+def get_mask_card_number(card_number: str | None) -> str:
     """Hide card number"""
+
+    logger_masks.info(f"Начало работы функции get_mask_card_number")
+
+    if card_number is None:
+        return ""
 
     logger_masks.info(f"Вызов функции get_mask_card_number с аргументом: {card_number}")
 
